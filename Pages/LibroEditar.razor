@@ -1,0 +1,77 @@
+﻿@page "/Libro-editar/{autor}"
+@inject HttpClient Http
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject NavigationManager NavigationManager
+
+<h3>Libro</h3>
+
+<EditForm Model="@libro" OnValidsubmit="@Guardar">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="Codigo">Codigo del libro</label>
+        <InputText id="Codigo" @bind-Value="libro.Codigo" class="form-control" />
+        <ValidationMessage For="() => libro.Codigo" />
+    </div>
+    <div class="form-group">
+        <label for="Nombre">Nombre del libro</label>
+        <InputText id="Nombre" @bind-Value="libro.Nombre" class="form-control" />
+        <ValidationMessage For="() => libro.Nombre" />
+    </div>
+    <div class="form-group">
+        <label for="Descripcion">Descripcion del libro</label>
+        <InputText id="Descripcion" @bind-Value="libro.Descripcion" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="PrecioCompra">Precio de compra del libro</label>
+        <InputText id="PrecioCompra" @bind-Value="libro.PrecioCompra" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="PrecioVenta">Precio de venta del libro</label>
+        <InputText id="PrecioVenta" @bind-Value="libro.PrecioVenta" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="Editorial">Editorial del libro</label>
+        <InputText id="Editorial" @bind-Value="libro.Editorial" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="Categoria">Categoria del libro</label>
+        <InputText id="Categoria" @bind-Value="libro.Categoria" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="Autor">Autor del libro</label>
+        <InputText id="Autor" @bind-Value="libro.Autor" class="form-control" />
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+    </div>
+</EditForm>
+
+@code {
+
+    [Parameter]
+    public string autor { get; set; }
+
+    private Libros libro = new Libros();
+    List<Libros> libros = new List<Libros>();
+
+
+    protected async Task Guardar()
+    {
+        await localStorage.SetItemAsync("libros", libros);
+
+        //Al finalizar de guardar regresamos al formulario original
+        NavigationManager.NavigateTo("/libro-crear");
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {   //Cargar todos los libros guardados
+        libros = await localStorage.GetItemAsync<List<Libros>>("libros");
+
+        if (libro == null)
+            libros = new List<Libros>();
+    }
+
+}
